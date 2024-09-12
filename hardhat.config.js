@@ -1,18 +1,19 @@
-require("@nomiclabs/hardhat-etherscan");
-require("@nomiclabs/hardhat-waffle");
-require("hardhat-gas-reporter");
-require("hardhat-deploy");
-require("solidity-coverage");
+require("@nomiclabs/hardhat-etherscan")
+require("@nomiclabs/hardhat-waffle")
+require("hardhat-gas-reporter")
+require("hardhat-deploy")
+require("solidity-coverage")
+const process = require("node:process")
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
+    const accounts = await hre.ethers.getSigners()
 
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
+    for (const account of accounts) {
+        console.log(account.address)
+    }
+})
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -21,48 +22,53 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: {
-    version: "0.8.26",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 1000,
-      },
+    solidity: {
+        version: "0.8.26",
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 1000,
+            },
+        },
     },
-  },
-  networks: {
-    main: {
-      chainId: 1,
-      url: `https://mainnet.infura.io/v3/${process.env?.INFURA_PROJECT_ID}` || "",
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    networks: {
+        main: {
+            chainId: 1,
+            url: `https://mainnet.infura.io/v3/${process.env?.INFURA_PROJECT_ID}` || "",
+            accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        },
+        hardhat: {
+            initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
+        },
+        goerli: {
+            chainId: 5,
+            url: `https://goerli.infura.io/v3/${process.env?.INFURA_PROJECT_ID}` || "",
+            accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        },
+        xdai: {
+            chainId: 100,
+            url: "https://rpc.xdaichain.com" || "",
+            accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        },
+        sepolia: {
+            chainId: 11155111,
+            url: `https://sepolia.infura.io/v3/${process.env?.INFURA_PROJECT_ID}` || "",
+            accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        },
     },
-    hardhat: {
-      initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
+    gasReporter: {
+        enabled: process.env.REPORT_GAS !== undefined,
+        currency: "USD",
+        gasPrice: 100,
+        coinmarketcap: "5d0616e9-5ad1-46a5-8456-8bf84bb4dbc5",
+        outputFile: "gasExpenseReport.txt",
+        noColors: true,
     },
-    goerli: {
-      chainId: 5,
-      url: `https://goerli.infura.io/v3/${process.env?.INFURA_PROJECT_ID}` || "",
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    etherscan: {
+        apiKey: process.env.ETHERSCAN,
     },
-    xdai: {
-      chainId: 100,
-      url: "https://rpc.xdaichain.com" || "",
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
-    gasPrice: 100,
-    coinmarketcap: "5d0616e9-5ad1-46a5-8456-8bf84bb4dbc5",
-    outputFile: "gasExpenseReport.txt",
-    noColors: true
-  },
-  etherscan: {
-    apiKey: process.env.ETHERSCAN,
-  },
 
-  mocha: {
-    timeout: 60000 // Testnet are taking long.
-  }
-};
+    mocha: {
+        timeout: 60000, // Testnet are taking long.
+    },
+}
