@@ -13,8 +13,9 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId, getUnnamedA
     const KLEROS = {
         1: "0x988b3A538b618C7A603e1c11Ab82Cd16dbE28069",
         4: "0x6e376E049BD375b53d31AFDc21415AeD360C1E70",
-        42: "0x60B2AbfDfaD9c0873242f59f2A8c32A3Cc682f80",
         5: "0x1128eD55ab2d796fa92D2F8E1f336d745354a77A",
+        42: "0x60B2AbfDfaD9c0873242f59f2A8c32A3Cc682f80",
+        11155111: "0x90992fb4E15ce0C59aEFfb376460Fda4Ee19C879",
     }
     const TREASURY = "0x387e8B40e332831b7a8ad629966df3E9f969C6ad"
 
@@ -58,9 +59,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId, getUnnamedA
     const { deploy } = deployments
     const { providers } = ethers
     const networks = {
-        42: config.networks.kovan,
         1: config.networks.main,
         5: config.networks.goerli,
+        42: config.networks.kovan,
+        11155111: config.networks.sepolia,
     }
     const web3provider = new providers.JsonRpcProvider(networks[chainId])
     const accounts = await getUnnamedAccounts()
@@ -70,7 +72,6 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId, getUnnamedA
     const contractInstance = deploy(contractName, {
         from: deployer,
         gasLimit: 6000000,
-        nonce: 24,
         args: [
             KLEROS[chainId],
             generateArbitratorExtraData(SUBCOURT, NUMBER_OF_VOTES),
